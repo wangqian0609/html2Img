@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<title>动态更换图片</title>
+<script>
+//计算根节点HTML的字体大小
+function resizeRoot(width){
+	var deviceWidth = document.documentElement.clientWidth,
+		num = width,
+		num1 = num / 100;
+	if(deviceWidth > num){
+		deviceWidth = num;	
+	}
+	document.documentElement.style.fontSize = deviceWidth / num1 + "px";
+}
+//根节点HTML的字体大小初始化
+resizeRoot(750);
+
+window.onresize = function(){
+	resizeRoot(750);
+};
+</script>
+<style type="text/css">
+    html, body, div, h1, h2, h3, h4, h5, h6, p, span, img, input, ul, li {
+        margin: 0;
+        padding: 0;
+    }
+
+    html, body {
+        width: 100%;
+        height: 100%;
+        font-family: Arial, Helvetica;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 500px;
+        height: 100%;
+        margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+        background-color:#f8f8f8;
+    }
+
+    .change {
+        width: 100%;
+        font-size: 20px;
+        color: #fff;
+        text-align: center;
+    }
+
+    p {
+        font-size: 20px;
+        color: #fff;
+        text-align: center;
+    }
+
+    .btns{
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        padding-bottom: 10%;
+        background-color: rgba(0,0,0,.2);
+    }
+
+    .pic-area {
+        width: 100%;
+        height: 0;
+        padding-bottom: 200%;
+        background-color: #f7f7f7;
+        overflow: hidden;
+        /*border:1px solid red;*/
+    }
+
+    .pic-area img {
+        -webkit-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+    }
+
+    #files,#cFiles{
+        width: 0;
+        height: 0;
+        opacity: 0;
+    }
+
+    .show-area {
+        width: 100%;
+        height: 0;
+        padding-bottom: 200%;
+        position: absolute;
+        left: 0%;
+        margin-left: 0%;
+        margin-top: 0%;
+    }
+</style>
+</head>
+<body id="daiyan">
+    <div class="container">
+        <div class="page page-root">
+            <div class="btns">
+                <input id="files" type="file" accept="image/*">
+                <label for="files">
+                    <p class="choose">选择图片</p>
+                </label>
+            </div>
+        </div>
+        <div class="page page-choose">
+            <div class="pic-area"></div>
+            <div class="btns" v-if="isShow">
+                <input id="cFiles" type="file" accept="image/*">
+                <label for="cFiles">
+                    <p class="change">切换图片</p>
+                </label>
+                <!-- <p class="addWord" @click="this.isShow=!this.isShow">添加文字</p> -->
+                <p class="submit-btn">完成</p>
+            </div>
+            <!-- <div class="btns" v-show='isShow'>
+                <input type="text" v-model="word" name="">
+                <input type="button" value="添加" @click="addWord">
+            </div> -->
+        </div>
+        <div class="page page-result">
+            <div class="show-area">
+                <img id="show-area" width="100%">
+            </div>
+        </div>
+    </div>
+    <script src="js/vue.min.js"></script>
+    <script src="js/hammer.min.js"></script>
+    <script src="js/cutter.js"></script>
+    <script>
+        var vm = new Vue({
+            el:'#daiyan',
+            data:{
+                img:{
+                    'containerDom' : document.querySelector('.container'),
+                    'pageListDom' : Array.prototype.slice.apply(document.querySelectorAll('.page')),
+                    'fileDom' : document.querySelector('#files'),
+                    'ChangefileDom' : document.querySelector('#cFiles'),
+                    'picAreaDom' : document.querySelector('.pic-area'),
+                    'submitBtnDom' : document.querySelector('.submit-btn'),
+                    'showAreaDom' : document.querySelector('#show-area')
+                },
+                word:'',
+                isShow:false,
+            },
+            methods:{
+                init:function(){
+                    console.log('显示第一屏');
+                    this.turnPage(0);
+                },
+                handleUpload:function(files){
+                    var reader = new FileReader(), _this = this;
+                    reader.readAsDataURL(files);
+
+                    reader.onload = function(){
+                        _this.chooseComplete(reader.result);
+                    };
+                },
+                chooseComplete:function(url){
+                    var _this = this;
+                    this.img.cutter = new Cutter(this.img.picAreaDom,{
+                        imgUrl: url,
+                        conWidth:this.img.containerDom.offsetWidth,
+                        conHeight:this.img.containerDom.offsetHeight,
+                        speed:2,
+                        callback:function(){
+                            _this.turnPage(1);
+                        }
+                    });
+                },
+                cutImage:function(){
+                    var result = this.img.cutter.cut();
+                    this.img.showAreaDom.src = result;
+                    this.turnPage(2);
+                },
+                turnPage:function(pageIndex){
+                    this.img.pageListDom.forEach(function(item,index){
+                        item.style.display = 'none';
+                    });
+                    this.img.pageListDom[pageIndex].style.display = 'block';
+                },
+                addWord:function(){
+                    if(this.word == ''){
+                        alert('请输入要添加的文字');
+                    }
+                    else{
+                        var olabel = document.createElements('label');
+                        olabel.innerHTML = this.word;
+                        this.img.picAreaDom.appendChild(olabel,childsNodes[0]);
+                    }
+                }
+            },
+            mounted:function(){
+                console.log('aaa');
+            }
+        })
+        vm.init();
+        vm.img.fileDom.onchange = function(e){
+            vm.handleUpload(e.target.files[0]);
+        }
+        vm.img.ChangefileDom.onchange = function(e){
+            vm.handleUpload(e.target.files[0]);
+        }
+        vm.img.submitBtnDom.onclick = function(){
+            vm.cutImage();
+        }
+    </script>
+</body>
+</html>
