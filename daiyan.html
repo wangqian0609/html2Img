@@ -197,7 +197,7 @@ window.onresize = function(){
         </div>
         <div class="page page-choose">
             <div class="paper">
-                <div id="title" class="title"><textarea  id="cutMsg" class="txt" type="text" value="" placeholder="请输入您想输入的话语" value="111"></textarea></div>
+                <div id="title" class="title"></div>
                 <div class="pic-area"></div>
             </div>
             <div class="btns">
@@ -205,7 +205,7 @@ window.onresize = function(){
                 <label for="cFiles">
                     <p class="change">切换图片</p>
                 </label>
-                <!-- <p class="changeWord" @click="change">修改文字</p> -->
+                <p class="changeWord">创建文字</p>
                 <p class="submit-btn">完成</p>
             </div>
         </div>
@@ -230,8 +230,9 @@ window.onresize = function(){
             this.changefileDom = doc.querySelector('#cFiles');
             this.picAreaDom = doc.querySelector('.pic-area');
             this.submitBtnDom = doc.querySelector('.submit-btn');
+            this.createBtnDom = doc.querySelector('.changeWord');
             this.showAreaDom = doc.querySelector('#show-area');
-            this.txtDom = doc.querySelector('.txt');
+            this.txtArea = doc.querySelector('.title');
         }
 
         SubType.prototype = {
@@ -262,9 +263,8 @@ window.onresize = function(){
                     }
                 });
             },
-
             cutImage: function() {
-                var Msg = this.txtDom.value;
+                // var Msg = this.txtDom.value;
                 var result = this.cutter.cut();
                 this.showAreaDom.src = result;
                 this.turnPage(2);
@@ -275,6 +275,13 @@ window.onresize = function(){
                     item.style.display = 'none';
                 });
                 this.pageListDom[pageIndex].style.display = 'block';
+            },
+            addWord:function(){
+                var otxtArea = document.createElement('textarea');
+                otxtArea.className = 'txt';
+                otxtArea.id = "cutMsg";
+                otxtArea.placeholder = "请输入您想输入的文字";
+                this.txtArea.appendChild(otxtArea); 
             }
         }
 
@@ -293,6 +300,9 @@ window.onresize = function(){
         a.submitBtnDom.onclick = function() {
             a.cutImage();
         };
+        a.createBtnDom.onclick = function(){
+            a.addWord();
+        }
     };
 
     /*文字拖拽*/

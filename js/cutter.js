@@ -100,7 +100,7 @@
 			var canvas = document.createElement('canvas'),
 				ctx = canvas.getContext('2d'),
 				img = document.querySelector('#cutImgObj'),
-				msg = document.querySelector('#cutMsg').value,
+				msg = '',
 				lineWidth = 0,
 				lastSubStrIndex = 0,
 				lineHeight = 44,
@@ -110,6 +110,10 @@
 				sx = data.moveX/data.scaleRate,sy = data.moveY/data.scaleRate,
 				cutWidth = this.opts.conWidth / data.scaleRate,
 				cutHeight = this.opts.conHeight / data.scaleRate;
+				
+			if(document.querySelector('.title').childElementCount != 0 ){
+				msg = document.querySelector('#cutMsg').value;
+			}
 
 			canvas.width = cutWidth;
 			canvas.height = cutHeight;
