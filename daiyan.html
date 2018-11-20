@@ -28,7 +28,6 @@ window.onresize = function(){
         margin: 0;
         padding: 0;
     }
-
     html, body {
         width: 100%;
         height: 100%;
@@ -46,7 +45,6 @@ window.onresize = function(){
         position: relative;
         overflow: hidden;
     }
-
     .page {
         width: 100%;
         height: 100%;
@@ -56,20 +54,17 @@ window.onresize = function(){
         display: none;
         background-color:#f8f8f8;
     }
-
     .change {
         width: 100%;
         font-size: 20px;
         color: #fff;
         text-align: center;
     }
-
     p {
         font-size: 20px;
         color: #fff;
         text-align: center;
     }
-
     .btns{
         width: 100%;
         position: absolute;
@@ -78,14 +73,13 @@ window.onresize = function(){
         padding-bottom: 10%;
         background-color: rgba(0,0,0,.2);
         z-index: 100;
+        font-size: 10px;
     }
-
     .paper{
         width: 100%;
         height: 100%;
         position: relative;
     }
-
     .pic-area {
         width: 100%;
         height: 0;
@@ -121,13 +115,11 @@ window.onresize = function(){
         -ms-transform: translate3d(0,0,0);
         transform: translate3d(0,0,0);
     }
-
     #files,#cFiles{
         width: 0;
         height: 0;
         opacity: 0;
     }
-
     .show-area {
         width: 100%;
         height: 0;
@@ -182,7 +174,25 @@ window.onresize = function(){
         font-size: .36rem;
         color: #fff; 
     }
-
+    #colors{
+        width:100%;
+        display: inline-block;
+        margin: 0;
+        text-align: center;
+        padding-top: 20px;
+    }
+    #colors > .active{
+        width:22px;
+        height: 22px;
+        border:1px solid #fff;
+    }
+    #colors dd{
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: inline-block;
+        margin: 0 10px 0 0;
+    }
 </style>
 </head>
 <body>
@@ -201,6 +211,7 @@ window.onresize = function(){
                 <div class="pic-area"></div>
             </div>
             <div class="btns">
+                <dl id="colors"></dl>
                 <input id="cFiles" type="file" accept="image/*">
                 <label for="cFiles">
                     <p class="change">切换图片</p>
@@ -220,6 +231,7 @@ window.onresize = function(){
     <script src="js/cutter.js"></script>
     <script src="js/move.js"></script>
     <script>
+    var colors = ['#fff','#f00','#ffa500','#ff0','#008000','#0ff','#00f','#800080','#000'];
     window.onload = function() {
 
         function SubType() {
@@ -233,6 +245,7 @@ window.onresize = function(){
             this.createBtnDom = doc.querySelector('.changeWord');
             this.showAreaDom = doc.querySelector('#show-area');
             this.txtArea = doc.querySelector('.title');
+            this.colorArea = doc.querySelector('#colors');
         }
 
         SubType.prototype = {
@@ -282,6 +295,19 @@ window.onresize = function(){
                 otxtArea.id = "cutMsg";
                 otxtArea.placeholder = "请输入您想输入的文字";
                 this.txtArea.appendChild(otxtArea); 
+                for(let i = 0 ; i < colors.length; i ++){
+                    var colorItem = document.createElement('dd');
+                    colorItem.title = colors[i];
+                    colorItem.style.backgroundColor = colors[i];
+                    colorItem.onclick = function(){
+                        document.querySelector('#cutMsg').style.color = this.title;
+                        for(let j = 0 ; j < colors.length; j++){
+                            document.querySelector('#colors').getElementsByTagName('dd')[j].className = '';
+                        }
+                        this.className = 'active';
+                    }
+                    this.colorArea.appendChild(colorItem,this.colorArea.childNodes[0]);
+                }
             }
         }
 

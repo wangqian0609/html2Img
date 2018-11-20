@@ -101,6 +101,7 @@
 				ctx = canvas.getContext('2d'),
 				img = document.querySelector('#cutImgObj'),
 				msg = '',
+				Fontcolor = '',
 				lineWidth = 0,
 				lastSubStrIndex = 0,
 				lineHeight = 44,
@@ -110,9 +111,10 @@
 				sx = data.moveX/data.scaleRate,sy = data.moveY/data.scaleRate,
 				cutWidth = this.opts.conWidth / data.scaleRate,
 				cutHeight = this.opts.conHeight / data.scaleRate;
-				
+
 			if(document.querySelector('.title').childElementCount != 0 ){
 				msg = document.querySelector('#cutMsg').value;
+				Fontcolor = document.querySelector('#cutMsg').style.color;
 			}
 
 			canvas.width = cutWidth;
@@ -131,7 +133,7 @@
 				ctx.font = "normal 44px PingFangSC-Medium";
 				ctx.textAlign = "start";
 				ctx.textBaseline = "hanging";
-				ctx.fillStyle = "#999";
+				ctx.fillStyle = Fontcolor;
 				for(let i = 0; i < msg.length; i++){
 					lineWidth += ctx.measureText(msg[i]).width;
 					if(lineWidth > img.width){
