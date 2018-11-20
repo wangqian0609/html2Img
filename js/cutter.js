@@ -98,15 +98,49 @@
 
 		cut: function() {
 			var canvas = document.createElement('canvas'),
+				ctx = canvas.getContext('2d'),
 				img = document.querySelector('#cutImgObj'),
+				msg = document.querySelector('#cutMsg').value,
+				lineWidth = 0,
+				lastSubStrIndex = 0,
+				lineHeight = 44,
+				initX = 0, initY = 0,
 				data = this.cutData,
+				sx = data.moveX/data.scaleRate,sy = data.moveY/data.scaleRate,
 				cutWidth = this.opts.conWidth / data.scaleRate,
 				cutHeight = this.opts.conHeight / data.scaleRate;
 
 			canvas.width = cutWidth;
 			canvas.height = cutHeight;
 
-			canvas.getContext('2d').drawImage(img, data.moveX/data.scaleRate, data.moveY/data.scaleRate, cutWidth, cutHeight, 0, 0, cutWidth, cutHeight);
+			if(isNaN(sx)){
+				sx = 0;
+			}
+			if(isNaN(sy)){
+				sy = 0;
+			}
+
+			ctx.drawImage(img, sx, sy, cutWidth, cutHeight, 0, 0, cutWidth, cutHeight);
+			if(msg !=''){
+				ctx.beginPath();
+				ctx.font = "normal 44px PingFangSC-Medium";
+				ctx.textAlign = "start";
+				ctx.textBaseline = "hanging";
+				ctx.fillStyle = "#999";
+				for(let i = 0; i < msg.length; i++){
+					lineWidth += ctx.measureText(msg[i]).width;
+					if(lineWidth > img.width/5*4){
+						ctx.fillText(msg.substring(lastSubStrIndex,i),initX,initY);
+						initY += lineHeight;
+						lineWidth = 0;
+						lastSubStrIndex = i;
+					}
+					if( i== msg.length -1){
+						ctx.fillText(msg.substring(lastSubStrIndex,i+1),initX,initY);
+					}
+				}
+				// ctx.fillText(msg,0,0,375);
+			}
 			return canvas.toDataURL('image/png');
 		},
 

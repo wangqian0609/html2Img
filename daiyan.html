@@ -8,19 +8,19 @@
 <script>
 //计算根节点HTML的字体大小
 function resizeRoot(width){
-	var deviceWidth = document.documentElement.clientWidth,
-		num = width,
-		num1 = num / 100;
-	if(deviceWidth > num){
-		deviceWidth = num;	
-	}
-	document.documentElement.style.fontSize = deviceWidth / num1 + "px";
+    var deviceWidth = document.documentElement.clientWidth,
+        num = width,
+        num1 = num / 100;
+    if(deviceWidth > num){
+        deviceWidth = num;  
+    }
+    document.documentElement.style.fontSize = deviceWidth / num1 + "px";
 }
 //根节点HTML的字体大小初始化
 resizeRoot(750);
 
 window.onresize = function(){
-	resizeRoot(750);
+    resizeRoot(750);
 };
 </script>
 <style type="text/css">
@@ -34,7 +34,10 @@ window.onresize = function(){
         height: 100%;
         font-family: Arial, Helvetica;
     }
-
+    #daiyan{
+        width:100%;
+        height: 100%;
+    }
     .container {
         width: 100%;
         max-width: 500px;
@@ -76,15 +79,35 @@ window.onresize = function(){
         background-color: rgba(0,0,0,.2);
     }
 
+    .paper{
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
     .pic-area {
         width: 100%;
         height: 0;
         padding-bottom: 200%;
         background-color: #f7f7f7;
         overflow: hidden;
+        position:relative;
         /*border:1px solid red;*/
     }
-
+    .title{
+        width: 100%;
+        z-index: 2;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .title .txt{
+        width: 100%;
+        font-size: 22px;
+        border: none;
+        background: transparent;
+        color: #999;
+    }
     .pic-area img {
         -webkit-transform: translate3d(0,0,0);
         -ms-transform: translate3d(0,0,0);
@@ -106,9 +129,55 @@ window.onresize = function(){
         margin-left: 0%;
         margin-top: 0%;
     }
+    .inputBox{
+        width: 100%;
+        padding: .2rem;
+        text-align: left;
+        background:rgba(0,0,0,.67);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        z-index: 5;
+    }
+    .inputBox input[type="text"]{
+        width: 100%;
+        height: .88rem;
+        line-height:.88rem;
+        border-radius: 5px;
+        padding: 0 .22rem;
+        color:#666;
+        border:none;
+        background: #fff;
+    }
+    .inputBox input[type="button"]{
+        width: 2.2rem;
+        text-align: center;
+        margin-right: 10px;
+        background: linear-gradient(#de0006, #ff510d);
+        background: -webkit-linear-gradient(#de0006, #ff510d);
+        height: .88rem;
+        line-height: .88rem;
+        display: inline-block;
+        position: relative;
+        -webkit-border-radius: .44rem;
+        border-radius: .44rem;
+        font-size: .32rem;
+        color: #fff;
+        border: 0;
+        margin-top: .2rem;
+        float: right;
+    }
+    .inputBox label{
+        width: 100%;
+        line-height: .88rem;
+        display: inline-block;
+        font-size: .36rem;
+        color: #fff; 
+    }
+
 </style>
 </head>
-<body id="daiyan">
+<body>
     <div class="container">
         <div class="page page-root">
             <div class="btns">
@@ -119,106 +188,102 @@ window.onresize = function(){
             </div>
         </div>
         <div class="page page-choose">
-            <div class="pic-area"></div>
-            <div class="btns" v-if="isShow">
+            <div class="paper">
+                <div class="title"><textarea  id="cutMsg" class="txt" type="text" value="" placeholder="这是模拟"></textarea></div>
+                <div class="pic-area"></div>
+            </div>
+            <div class="btns">
                 <input id="cFiles" type="file" accept="image/*">
                 <label for="cFiles">
                     <p class="change">切换图片</p>
                 </label>
-                <!-- <p class="addWord" @click="this.isShow=!this.isShow">添加文字</p> -->
+                <p class="changeWord" @click="change">修改文字</p>
                 <p class="submit-btn">完成</p>
             </div>
-            <!-- <div class="btns" v-show='isShow'>
-                <input type="text" v-model="word" name="">
-                <input type="button" value="添加" @click="addWord">
-            </div> -->
         </div>
         <div class="page page-result">
             <div class="show-area">
-                <img id="show-area" width="100%">
+                <img id="show-area" width="100%" src=''>
             </div>
         </div>
     </div>
     <script src="js/vue.min.js"></script>
-    <script src="js/hammer.min.js"></script>
+    <script src="js/hammer.js"></script>
     <script src="js/cutter.js"></script>
     <script>
-        var vm = new Vue({
-            el:'#daiyan',
-            data:{
-                img:{
-                    'containerDom' : document.querySelector('.container'),
-                    'pageListDom' : Array.prototype.slice.apply(document.querySelectorAll('.page')),
-                    'fileDom' : document.querySelector('#files'),
-                    'ChangefileDom' : document.querySelector('#cFiles'),
-                    'picAreaDom' : document.querySelector('.pic-area'),
-                    'submitBtnDom' : document.querySelector('.submit-btn'),
-                    'showAreaDom' : document.querySelector('#show-area')
-                },
-                word:'',
-                isShow:false,
-            },
-            methods:{
-                init:function(){
-                    console.log('显示第一屏');
-                    this.turnPage(0);
-                },
-                handleUpload:function(files){
-                    var reader = new FileReader(), _this = this;
-                    reader.readAsDataURL(files);
+    window.onload = function() {
 
-                    reader.onload = function(){
-                        _this.chooseComplete(reader.result);
-                    };
-                },
-                chooseComplete:function(url){
-                    var _this = this;
-                    this.img.cutter = new Cutter(this.img.picAreaDom,{
-                        imgUrl: url,
-                        conWidth:this.img.containerDom.offsetWidth,
-                        conHeight:this.img.containerDom.offsetHeight,
-                        speed:2,
-                        callback:function(){
-                            _this.turnPage(1);
-                        }
-                    });
-                },
-                cutImage:function(){
-                    var result = this.img.cutter.cut();
-                    this.img.showAreaDom.src = result;
-                    this.turnPage(2);
-                },
-                turnPage:function(pageIndex){
-                    this.img.pageListDom.forEach(function(item,index){
-                        item.style.display = 'none';
-                    });
-                    this.img.pageListDom[pageIndex].style.display = 'block';
-                },
-                addWord:function(){
-                    if(this.word == ''){
-                        alert('请输入要添加的文字');
-                    }
-                    else{
-                        var olabel = document.createElements('label');
-                        olabel.innerHTML = this.word;
-                        this.img.picAreaDom.appendChild(olabel,childsNodes[0]);
-                    }
-                }
+        function SubType() {
+            var doc = document;
+            this.containerDom = doc.querySelector('.container');
+            this.pageListDom = Array.prototype.slice.apply(doc.querySelectorAll('.page'));
+            this.fileDom = doc.querySelector('#files');
+            this.changefileDom = doc.querySelector('#cFiles');
+            this.picAreaDom = doc.querySelector('.pic-area');
+            this.submitBtnDom = doc.querySelector('.submit-btn');
+            this.showAreaDom = doc.querySelector('#show-area');
+            this.txtDom = doc.querySelector('.txt');
+        }
+
+        SubType.prototype = {
+            init: function() {
+                this.turnPage(0);
             },
-            mounted:function(){
-                console.log('aaa');
+
+            handleUpload: function(files) {
+                var reader = new FileReader(),
+                    _this = this;
+                reader.readAsDataURL(files);
+
+                reader.onload = function() {
+                    _this.chooseComplete(reader.result);
+                };
+                // _this.chooseComplete(reader.result);
+            },
+
+            chooseComplete: function(url) {
+                var _this = this;
+                this.cutter = new Cutter(this.picAreaDom, {
+                    imgUrl: url,
+                    conWidth: this.containerDom.offsetWidth,
+                    conHeight: this.containerDom.offsetHeight,
+                    speed: 2,
+                    callback: function() {
+                        _this.turnPage(1);
+                    }
+                });
+            },
+
+            cutImage: function() {
+                var Msg = this.txtDom.value;
+                var result = this.cutter.cut();
+                this.showAreaDom.src = result;
+                this.turnPage(2);
+            },
+            /*控制模块显示*/
+            turnPage: function(pageIndex) {
+                this.pageListDom.forEach(function(item, index) {
+                    item.style.display = 'none';
+                });
+                this.pageListDom[pageIndex].style.display = 'block';
             }
-        })
-        vm.init();
-        vm.img.fileDom.onchange = function(e){
-            vm.handleUpload(e.target.files[0]);
         }
-        vm.img.ChangefileDom.onchange = function(e){
-            vm.handleUpload(e.target.files[0]);
-        }
-        vm.img.submitBtnDom.onclick = function(){
-            vm.cutImage();
-        }
+
+        var a = new SubType();
+        a.init();
+
+        a.fileDom.onchange = function(e) {
+            a.handleUpload(e.target.files[0]);
+        };
+
+        a.changefileDom.onchange = function(e){
+            a.handleUpload(e.target.files[0]);
+        };
+
+        a.submitBtnDom.onclick = function() {
+            a.cutImage();
+        };
+    };
     </script>
 </body>
 </html>
