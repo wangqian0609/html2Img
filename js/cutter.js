@@ -104,7 +104,8 @@
 				lineWidth = 0,
 				lastSubStrIndex = 0,
 				lineHeight = 44,
-				initX = 0, initY = 0,
+				initX = document.querySelector('.title').offsetLeft * 2, 
+				initY = document.querySelector('.title').offsetTop * 2,
 				data = this.cutData,
 				sx = data.moveX/data.scaleRate,sy = data.moveY/data.scaleRate,
 				cutWidth = this.opts.conWidth / data.scaleRate,
@@ -129,7 +130,7 @@
 				ctx.fillStyle = "#999";
 				for(let i = 0; i < msg.length; i++){
 					lineWidth += ctx.measureText(msg[i]).width;
-					if(lineWidth > img.width/5*4){
+					if(lineWidth > img.width){
 						ctx.fillText(msg.substring(lastSubStrIndex,i),initX,initY);
 						initY += lineHeight;
 						lineWidth = 0;
