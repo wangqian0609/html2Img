@@ -44,10 +44,10 @@ function move(ev){
         }
         ev.style.left = x+"px";
         ev.style.top = y +"px";
-        //阻止页面的滑动默认事件
-        document.addEventListener("touchmove",function(){
-            event.preventDefault();
-        },false);
+        // //阻止页面的滑动默认事件
+        // document.addEventListener("touchmove",function(){
+        //     event.preventDefault();
+        // },false);
     }
 }
 function end(){    
