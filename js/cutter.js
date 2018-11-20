@@ -134,7 +134,7 @@
 				ctx.textAlign = "start";
 				ctx.textBaseline = "hanging";
 				ctx.fillStyle = Fontcolor;
-				for(let i = 0; i < msg.length; i++){
+				for(var i = 0; i < msg.length; i++){
 					lineWidth += ctx.measureText(msg[i]).width;
 					if(lineWidth > img.width){
 						ctx.fillText(msg.substring(lastSubStrIndex,i),initX,initY);
