@@ -176,6 +176,7 @@ window.onresize = function(){
     }
     .fontStyle{
         width:100%;
+        display: none;
     }
     #colors{
         width:100%;
@@ -195,6 +196,38 @@ window.onresize = function(){
         border-radius: 50%;
         display: inline-block;
         margin: 0 10px 0 0;
+    }
+    #weights{
+        width:100%;
+        display: inline-block;
+        margin: 0;
+        text-align: center;
+        padding-top: 20px;
+    }
+    #weights > .active{
+        border:1px solid #fff;
+    }
+    #weights dd{
+        display: inline-block;
+        margin:0 10px 0 0;
+        font-size:20px;
+        color:#000;
+    }
+    #fontFamily{
+        width:100%;
+        display: inline-block;
+        margin: 0;
+        text-align: center;
+        padding-top: 20px;
+    }
+    #fontFamily > .active{
+        border:1px solid #fff;
+    }
+    #fontFamily dd{
+        display: inline-block;
+        margin:0 10px 0 0;
+        font-size:20px;
+        color: #000;
     }
 </style>
 </head>
@@ -216,6 +249,8 @@ window.onresize = function(){
             <div class="btns">
                 <div class="fontStyle">
                      <dl id="colors"></dl>
+                     <dl id="weights"></dl>
+                     <dl id="fontFamily"></dl>
                 </div>
                 <input id="cFiles" type="file" accept="image/*">
                 <label for="cFiles">
@@ -237,6 +272,8 @@ window.onresize = function(){
     <script src="js/move.js"></script>
     <script>
     var colors = ['#fff','#f00','#ffa500','#ff0','#008000','#0ff','#00f','#800080','#000'];
+    var weights = ['bold','normal','lighter'];
+    var fontFamily = [{fontName:'宋体',fontValue:'SimSun'},{fontName:'黑体',fontValue:'SimHei'},{fontName:'微软雅黑',fontValue:'Microsoft Yahei'},{fontName:'微软正黑体',fontValue:'Microsoft JhengHei'},{fontName:'楷体',fontValue:'KaiTi'},{fontName:'新宋体',fontValue:'NSimSun'},{fontName:'仿宋',fontValue:'FangSong'},{fontName:'苹方',fontValue:'PingFangSC-Medium'}];
     window.onload = function() {
 
         function SubType() {
@@ -250,7 +287,7 @@ window.onresize = function(){
             this.createBtnDom = doc.querySelector('.changeWord');
             this.showAreaDom = doc.querySelector('#show-area');
             this.txtArea = doc.querySelector('.title');
-            this.colorArea = doc.querySelector('#colors');
+            this.fontDom = doc.querySelector('.fontStyle');
         }
 
         SubType.prototype = {
@@ -295,24 +332,83 @@ window.onresize = function(){
                 this.pageListDom[pageIndex].style.display = 'block';
             },
             addWord:function(){
-                var otxtArea = document.createElement('textarea');
-                otxtArea.className = 'txt';
-                otxtArea.id = "cutMsg";
-                otxtArea.placeholder = "请输入您想输入的文字";
-                this.txtArea.appendChild(otxtArea); 
-                for(var i = 0 ; i < colors.length; i ++){
-                    var colorItem = document.createElement('dd');
-                    colorItem.title = colors[i];
-                    colorItem.style.backgroundColor = colors[i];
-                    colorItem.onclick = function(){
-                        document.querySelector('#cutMsg').style.color = this.title;
-                        for(var j = 0 ; j < colors.length; j++){
-                            document.querySelector('#colors').getElementsByTagName('dd')[j].className = '';
-                        }
-                        this.className = 'active';
-                    }
-                    this.colorArea.appendChild(colorItem,this.colorArea.childNodes[0]);
+                if(this.fontDom.style.display  == 'block'){
+                    this.fontDom.style.display = "none";
                 }
+                else{
+                    this.fontDom.style.display = "block";
+                };
+                if(this.txtArea.childElementCount == 0){
+                    var otxtArea = document.createElement('textarea');
+                    otxtArea.className = 'txt';
+                    otxtArea.id = "cutMsg";
+                    otxtArea.placeholder = "请输入您想输入的文字";
+                    otxtArea.style.fontStyle = "normal";
+                    otxtArea.style.fontSize = "22px";
+                    this.txtArea.appendChild(otxtArea);
+                }
+                /*颜色*/ 
+                var oColors = document.querySelector('#colors');
+                if(oColors.childElementCount == 0){
+                    for(var i = 0 ; i < colors.length; i ++){
+                        var colorItem = document.createElement('dd');
+                        colorItem.title = colors[i];
+                        colorItem.style.backgroundColor = colors[i];
+                        colorItem.onclick = function(){
+                            document.querySelector('#cutMsg').style.color = this.title;
+                            for(var j = 0 ; j < colors.length; j++){
+                                document.querySelector('#colors').getElementsByTagName('dd')[j].className = '';
+                            }
+                            this.className = 'active';
+                        }
+                        oColors.appendChild(colorItem,oColors.childNodes[0]);
+                    }
+                };
+                /*字体粗细*/
+                var oWeight = document.querySelector('#weights');
+                if(oWeight.childElementCount == 0){
+                    for(var k = 0 ; k < weights.length; k++){
+                        var weiItem = document.createElement('dd');
+                        weiItem.title = weights[k];
+                        weiItem.style.fontWeight = weights[k];
+                        weiItem.innerHTML = weights[k];
+                        weiItem.onclick = function(){
+                            document.querySelector('#cutMsg').style.fontWeight = this.title;
+                            // if(this.title == "bold"){
+                            //     document.querySelector('#cutMsg').style.fontSize = '44px';
+                            // }
+                            // else if(this.title == "lighter"){
+                            //     document.querySelector('#cutMsg').style.fontSize = '33px';
+                            // }
+                            // else{
+                            //     document.querySelector('#cutMsg').style.fontSize = '22px';
+                            // }
+                            for(var l = 0 ; l < weights.length; l ++){
+                                document.querySelector('#weights').getElementsByTagName('dd')[l].className = '';
+                            }
+                            this.className = 'active';
+                        }
+                        oWeight.appendChild(weiItem,oWeight.childNodes[0]);
+                    }
+                };
+                /*字体类型*/
+                var oFontFamily = document.querySelector('#fontFamily');
+                if(oFontFamily.childElementCount ==0){
+                    for(var o = 0; o < fontFamily.length; o++){
+                        var FamilyItem = document.createElement('dd');
+                        FamilyItem.title = fontFamily[o].fontValue;
+                        FamilyItem.innerHTML = fontFamily[o].fontName;
+                        FamilyItem.style.fontFamily = fontFamily[o].fontValue;
+                        FamilyItem.onclick = function(){
+                            document.querySelector('#cutMsg').style.fontFamily = this.title;
+                            for(var p = 0 ; p < fontFamily.length; p++){
+                                document.querySelector('#fontFamily').getElementsByTagName('dd')[p].className = '';
+                            }
+                            this.className = 'active';
+                        }
+                        oFontFamily.appendChild(FamilyItem,oFontFamily.childNodes[0]);
+                    }
+                };
             },
             savePic:function(){
                 var imgUrl = this.showAreaDom.src;
@@ -320,11 +416,11 @@ window.onresize = function(){
                 var isOpera = userAgent.indexOf('Opera') > -1;
                 if(userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera){
                     var oPop = window.open(imgUrl,"", "width = 1.height = 1,top = 5000, left = 5000");
-                    for(; oPop.document.readyState != "complete";){
-                        if(oPop.document.readyState == "complete")
+                    for(; oPop.document.readyState != "complete ";){
+                        if(oPop.document.readyState == "complete ")
                             break;
                     }
-                    oPop.document.execCommand('SaveAs');
+                    oPop.document.execCommand('SaveAs'); //把当前web页保存成文件
                     oPop.close();
                 }
                 else{

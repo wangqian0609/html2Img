@@ -100,21 +100,29 @@
 			var canvas = document.createElement('canvas'),
 				ctx = canvas.getContext('2d'),
 				img = document.querySelector('#cutImgObj'),
-				msg = '',
-				Fontcolor = '',
-				lineWidth = 0,
-				lastSubStrIndex = 0,
-				lineHeight = 44,
 				initX = document.querySelector('.title').offsetLeft * 2, 
 				initY = document.querySelector('.title').offsetTop * 2,
 				data = this.cutData,
 				sx = data.moveX/data.scaleRate,sy = data.moveY/data.scaleRate,
 				cutWidth = this.opts.conWidth / data.scaleRate,
-				cutHeight = this.opts.conHeight / data.scaleRate;
+				cutHeight = this.opts.conHeight / data.scaleRate,
+				msg = '',
+				Fontcolor = '',
+				FontWeight = '',
+				FOntFamily = '',
+				FontSize = 22 / data.scaleRate + 'px',
+				FontStyle = 'normal',
+				lineWidth = 0,
+				lastSubStrIndex = 0,
+				lineHeight = 22 / data.scaleRate;
 
 			if(document.querySelector('.title').childElementCount != 0 ){
 				msg = document.querySelector('#cutMsg').value;
 				Fontcolor = document.querySelector('#cutMsg').style.color;
+				FontWeight = document.querySelector('#cutMsg').style.fontWeight;
+				FOntFamily = document.querySelector('#cutMsg').style.fontFamily;
+				// FontSize = document.querySelector('#cutMsg').style.fontSize;
+				// FontStyle = document.querySelector('#cutMsg').style.fontStyle;
 			}
 
 			canvas.width = cutWidth;
@@ -130,10 +138,10 @@
 			ctx.drawImage(img, sx, sy, cutWidth, cutHeight, 0, 0, cutWidth, cutHeight);
 			if(msg !=''){
 				ctx.beginPath();
-				ctx.font = "normal 44px PingFangSC-Medium";
+				ctx.font = FontStyle + ' ' + FontWeight + ' ' + FontSize + ' ' + FOntFamily;
+				ctx.fillStyle = Fontcolor;
 				ctx.textAlign = "start";
 				ctx.textBaseline = "hanging";
-				ctx.fillStyle = Fontcolor;
 				for(var i = 0; i < msg.length; i++){
 					lineWidth += ctx.measureText(msg[i]).width;
 					if(lineWidth > img.width){
